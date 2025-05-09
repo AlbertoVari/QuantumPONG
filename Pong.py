@@ -5,11 +5,11 @@ import random
 BALL_CHAR = 'O'
 PADDLE_CHAR = '|'
 HEIGHT = 20
-TOP_BOUND = 3
-BOTTOM_BOUND = HEIGHT - 4
 WIDTH = 60
 PADDLE_SIZE = 4
 WIN_SCORE = 10
+TOP_BOUND = 3
+BOTTOM_BOUND = HEIGHT - 4
 
 def draw_paddle(win, x, y):
     for i in range(PADDLE_SIZE):
@@ -45,7 +45,6 @@ def main(stdscr):
 
     difficulty = select_difficulty(stdscr)
 
-    # AI behavior tuning
     if difficulty == "Easy":
         ai_speed = 2
         ai_error_chance = 0.3
@@ -83,6 +82,10 @@ def main(stdscr):
             stdscr.clear()
             stdscr.border()
 
+            for x in range(1, WIDTH - 1):
+                stdscr.addch(TOP_BOUND, x, '-')
+                stdscr.addch(BOTTOM_BOUND, x, '-')
+
             stdscr.addstr(0, 2, f"Player 1: {score1}   AI: {score2}   (First to {WIN_SCORE})")
 
             draw_paddle(stdscr, paddle1_x, paddle1_y)
@@ -96,7 +99,6 @@ def main(stdscr):
             elif key == ord('s') and paddle1_y < HEIGHT - PADDLE_SIZE - 1:
                 paddle1_y += 1
 
-            # AI movement
             if frame_count % ai_speed == 0 and ball_dx > 0:
                 if random.random() > ai_error_chance:
                     if ball_y < paddle2_y and paddle2_y > 1:
@@ -104,7 +106,6 @@ def main(stdscr):
                     elif ball_y > paddle2_y + PADDLE_SIZE - 1 and paddle2_y < HEIGHT - PADDLE_SIZE - 1:
                         paddle2_y += 1
 
-            # Ball movement
             ball_x += ball_dx
             ball_y += ball_dy
 
@@ -117,7 +118,6 @@ def main(stdscr):
             if ball_x == paddle2_x - 1 and paddle2_y <= ball_y < paddle2_y + PADDLE_SIZE:
                 ball_dx *= -1
 
-            # Scoring
             if ball_x <= 0:
                 score2 += 1
                 ball_x, ball_y = WIDTH // 2, HEIGHT // 2
@@ -132,7 +132,6 @@ def main(stdscr):
                 ball_dy = 1 if random.random() > 0.5 else -1
                 time.sleep(1)
 
-            # Win check
             if score1 >= WIN_SCORE or score2 >= WIN_SCORE:
                 stdscr.clear()
                 winner = "Player 1" if score1 > score2 else "AI"
